@@ -1,0 +1,73 @@
+=====================================================
+CARA PAKAI (ringkas):
+1. Buka Google Spreadsheet Anda
+2. Menu Ekstensi > Apps Script
+3. Hapus isi editor, tempel KODE di bawah
+4. Nama sheet (tab) boleh apa saja; default "Ucapan"
+5. Baris 1 sheet otomatis diisi header oleh skrip
+6. Deploy > New deployment > jenis "Web app"
+   - Execute as: Me
+   - Who has access: Anyone
+7. Izinkan akses, lalu SALIN URL Web App (akhiran /exec)
+8. Buka index.html, ganti baris:
+   var SHEET_API = "...URL DISINI..."
+   dengan URL tadi, simpan, Ctrl+F5
+
+=====================================================
+KODE APPS SCRIPT (tempel mulai di bawah garis ini):
+
+var SHEET_NAME = 'Ucapan';
+
+function getSheet_() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sh = ss.getSheetByName(SHEET_NAME);
+  if (!sh) {
+    sh = ss.insertSheet(SHEET_NAME);
+    sh.appendRow(['Timestamp', 'Nama', 'Kehadiran', 'Jumlah', 'Ucapan']);
+  }
+  return sh;
+}
+
+function doGet(e) {
+  var out = { ok: true, wishes: [] };
+  try {
+    var sh = getSheet_();
+    var data = sh.getDataRange().getValues();
+    for (var i = data.length - 1; i >= 1; i--) {
+      var r = data[i];
+      if (!r[1] && !r[4]) continue;
+      var t = (r[0] instanceof Date) ? r[0] : new Date(r[0]);
+      out.wishes.push({
+        name: String(r[1]),
+        attendance: String(r[2]),
+        guests: String(r[3]),
+        message: String(r[4]),
+        timestamp: Utilities.formatDate(t, Session.getScriptTimeZone(), 'dd MMM yyyy, HH:mm')
+      });
+    }
+  } catch (err) {
+    out.ok = false;
+    out.error = String(err);
+  }
+  return ContentService.createTextOutput(JSON.stringify(out))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  var out = { ok: false };
+  try {
+    var d = JSON.parse(e.postData.contents);
+    var name = String(d.name || '').substring(0, 60);
+    var msg = String(d.message || '').substring(0, 500);
+    if (!name || !msg) throw new Error('Nama dan ucapan wajib diisi');
+    var sh = getSheet_();
+    sh.appendRow([new Date(), name, String(d.attendance || ''), String(d.guests || ''), msg]);
+    out.ok = true;
+  } catch (err) {
+    out.error = String(err);
+  }
+  return ContentService.createTextOutput(JSON.stringify(out))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+=====================================================
