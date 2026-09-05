@@ -190,9 +190,9 @@ var initCoreInvitation = function initCoreInvitation() {
   for (var _i4 = 0; _i4 < addressText.length; _i4++) {
     if (addressText[_i4].innerHTML) {
       if (lang == 'id') {
-        addressText[_i4].insertAdjacentHTML("afterend", "<button type='button' class='btn btn-sm btn-primary mt-2 animate__animated animate__fadeInUp animate__slow delay-5' data-text='".concat(addressText[_i4].innerText, "' onclick='copyText(event)' style='font-family: sans-serif; border-radius: 4px;'>Salin Alamat</button>"));
+        addressText[_i4].insertAdjacentHTML("afterend", "<button type='button' class='btn btn-sm btn-primary mt-2 animate__animated animate__fadeInUp animate__slow delay-5' data-text='".concat(addressText[_i4].innerText.replace(/\s+/g, " ").trim(), "' onclick='copyText(event)' style='font-family: sans-serif; border-radius: 4px;'>Salin Alamat</button>"));
       } else {
-        addressText[_i4].insertAdjacentHTML("afterend", "<button type='button' class='btn btn-sm btn-primary mt-2 animate__animated animate__fadeInUp animate__slow delay-5' data-text='".concat(addressText[_i4].innerText, "' onclick='copyText(event)' style='font-family: sans-serif; border-radius: 4px;'>Copy to Clipboard</button>"));
+        addressText[_i4].insertAdjacentHTML("afterend", "<button type='button' class='btn btn-sm btn-primary mt-2 animate__animated animate__fadeInUp animate__slow delay-5' data-text='".concat(addressText[_i4].innerText.replace(/\s+/g, " ").trim(), "' onclick='copyText(event)' style='font-family: sans-serif; border-radius: 4px;'>Copy to Clipboard</button>"));
       }
     }
   }
