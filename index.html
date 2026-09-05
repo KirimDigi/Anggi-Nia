@@ -1731,8 +1731,25 @@
   <script>
     (function () {
       function getGuestName() {
-        var params = new URLSearchParams(window.location.search);
-        var name = params.get('to') || params.get('n') || params.get('guest') || params.get('nama');
+        var name = null;
+        var hash = window.location.hash;
+
+        if (hash && hash.length > 1) {
+          var qIndex = hash.indexOf('?');
+          var hashStr = qIndex >= 0 ? hash.slice(qIndex + 1) : hash.slice(1);
+          try {
+            var hashParams = new URLSearchParams(hashStr);
+            name = hashParams.get('to') || hashParams.get('n') || hashParams.get('guest') || hashParams.get('nama');
+          } catch (e) {
+            name = null;
+          }
+        }
+
+        if (!name) {
+          var params = new URLSearchParams(window.location.search);
+          name = params.get('to') || params.get('n') || params.get('guest') || params.get('nama');
+        }
+
         if (!name) return 'Guest Name';
         return name.trim();
       }
