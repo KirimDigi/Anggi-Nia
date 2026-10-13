@@ -256,7 +256,7 @@
         <div class="h-100 w-100 d-flex align-items-center justify-content-center">
           <div class="canvas not-open  ">
             <!-- invitation -->
-            <div id="satuMomen" data-guest="Guest Name" data-group="VIP">
+            <div id="satuMomen" data-guest="" data-group="VIP">
               <div class="satumomen_track">
                 <ul class="satumomen_list">
                   <li class="satumomen_slide satumomen_cover">
@@ -310,10 +310,6 @@
                             <div style="border-radius:0.5rem;padding:10px;max-width:290px;margin:auto;">
                               <div class="editable mb-2 animate__animated animate__fadeInUp animate__slower"
                                 style="font-size:14.4px;">Dear,<br>Mr./Mrs./Ms.</div>
-
-                              <div id="guestNameSlot"
-                                class="editable color-accent h5 mb-2 font-weight-bold animate__animated animate__fadeInUp animate__slower"
-                                style="font-size:18px;">Honored Guest</div>
                             </div>
                             <button
                               class="btn-open-invitation btn btn-primary rounded-pill animate__animated animate__fadeInUp animate__slow"
@@ -1247,10 +1243,6 @@
             </div>
             <hr style="margin-top: 0.75rem; margin-bottom: 0.75rem; border: 0; border-top: 2px dashed rgba(0,0,0,.1);">
             <div style="margin-bottom: 6px">
-              <div style="color: #b2b2b2; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Nama Tamu
-              </div>
-              <div id="qrGuestName" style="font-weight: 700; font-size: 18px; color: var(--inv-base); margin-top: 2px;">
-                Guest Name</div>
               <button id="btnDownloadEInvitation" onclick="downloadEInvitation()" type="button"
                 class="btn btn-sm btn-primary rounded-pill mt-3"
                 style="font-family: var(--font-base, 'Cormorant Upright', serif); font-weight: 600; padding: 10px 28px;">
@@ -1273,7 +1265,7 @@
           <!-- rsvp form -->
           <rsvp-component
             :lang="{&quot;invitation_code&quot;:&quot;Invitation Code&quot;,&quot;validate_code&quot;:&quot;Validate Invitation Code&quot;,&quot;name&quot;:&quot;Name&quot;,&quot;group_name&quot;:&quot;Group Name&quot;,&quot;phone&quot;:&quot;Phone \/ WhatsApp&quot;,&quot;attendance&quot;:&quot;Attendance?&quot;,&quot;yes&quot;:&quot;Attending&quot;,&quot;no&quot;:&quot;Not Attending&quot;,&quot;guest&quot;:&quot;Guest(s)&quot;,&quot;guest_count&quot;:&quot;Number of Guests&quot;,&quot;comment&quot;:&quot;Comments or Wishes&quot;,&quot;send&quot;:&quot;Send&quot;,&quot;update&quot;:&quot;Send&quot;,&quot;captcha_placeholder&quot;:&quot;Type Text&quot;}"
-            :invitation_id="492185" name="Guest Name" code="" :replace="false" overlay="1"></rsvp-component>
+            :invitation_id="492185" name="" code="" :replace="false" overlay="1"></rsvp-component>
           <!-- rsvp form -->
           <button onclick="closeModal(rsvpModal)" type="button" class="btn btn-close"><svg
               xmlns="http://www.w3.org/2000/svg" height="42px" width="42px" fill="none" viewbox="0 0 24 24"
@@ -1395,15 +1387,32 @@
           style="display:block;width:100%;box-sizing:border-box;padding:10px 12px;margin-bottom:8px;border:1px solid #cccccc;border-radius:8px;background:#ffffff;color:#333333;font-size:14px;font-family:inherit;"></textarea>
 
         <div style="text-align:center;font-size:12px;color:#888888;margin-bottom:8px;">Are you attending?</div>
-        <div id="attendGroup" style="display:flex;justify-content:center;gap:8px;margin-bottom:14px;">
+        <div id="attendGroup" style="display:flex;justify-content:center;gap:8px;margin-bottom:12px;">
           <label
-            style="cursor:pointer;background:#376642;color:#ffffff;border-radius:999px;padding:8px 16px;font-size:13px;">
+            style="cursor:pointer;background:#376642;color:#ffffff;border:1px solid #376642;border-radius:999px;padding:8px 16px;font-size:13px;">
             <input type="radio" name="attend" value="Attending" checked style="display:none;">&#10003; Attending
           </label>
           <label
             style="cursor:pointer;background:#ffffff;color:#666666;border:1px solid #bbbbbb;border-radius:999px;padding:8px 16px;font-size:13px;">
             <input type="radio" name="attend" value="Not Attending" style="display:none;">&#10005; Not Attending
           </label>
+        </div>
+
+        <div id="guestCountContainer" style="margin-bottom:14px;">
+          <div style="text-align:center;font-size:12px;color:#888888;margin-bottom:8px;">Number of Guests</div>
+          <div id="guestGroup" style="display:flex;justify-content:center;gap:8px;">
+            <label
+              style="cursor:pointer;background:#376642;color:#ffffff;border:1px solid #376642;border-radius:999px;padding:7px 18px;font-size:13px;">
+              <input type="radio" name="guestCount" value="1" checked style="display:none;">1 Guest
+            </label>
+            <label
+              style="cursor:pointer;background:#ffffff;color:#666666;border:1px solid #bbbbbb;border-radius:999px;padding:7px 18px;font-size:13px;">
+              <input type="radio" name="guestCount" value="2" style="display:none;">2 Guests
+            </label>
+          </div>
+        </div>
+        <div id="wishError"
+          style="display:none;color:#b43a3a;font-size:12px;text-align:center;margin-bottom:10px;line-height:1.4;background:rgba(180,58,58,0.08);padding:8px 12px;border-radius:8px;border:1px solid rgba(180,58,58,0.2);">
         </div>
         <button type="submit"
           style="width:100%;padding:11px;border:none;border-radius:999px;background:#376642;color:#ffffff;font-weight:bold;font-size:14px;cursor:pointer;">Send</button>
@@ -1569,17 +1578,32 @@
   <script>
     var SHEET_API = "https://script.google.com/macros/s/AKfycbxX2wQ67aokKh7dfNeUbw643gZPoXC4YJxKf8hiNUXX4cNGkIIc1lGWaqDieVgoWR4e-w/exec";
     var allWishes = [], visibleCount = 5;
+    function syncRadioGroup(name) {
+      var inputs = document.querySelectorAll('input[name="' + name + '"]');
+      inputs.forEach(function (inp) {
+        var label = inp.closest('label');
+        if (label) {
+          var on = inp.checked;
+          label.style.background = on ? '#376642' : '#ffffff';
+          label.style.color = on ? '#ffffff' : '#666666';
+          label.style.border = on ? '1px solid #376642' : '1px solid #bbbbbb';
+        }
+      });
+    }
+
     document.addEventListener('change', function (e) {
       if (e.target && e.target.name === 'attend') {
-        var labels = e.target.closest('div').querySelectorAll('label');
-        labels.forEach(function (l) {
-          var on = l.querySelector('input').checked;
-          l.style.background = on ? '#376642' : '#ffffff';
-          l.style.color = on ? '#ffffff' : '#666666';
-          l.style.border = on ? '1px solid #376642' : '1px solid #bbbbbb';
-        });
+        syncRadioGroup('attend');
+        var gcContainer = document.getElementById('guestCountContainer');
+        if (gcContainer) {
+          gcContainer.style.display = e.target.value === 'Attending' ? 'block' : 'none';
+        }
+      }
+      if (e.target && e.target.name === 'guestCount') {
+        syncRadioGroup('guestCount');
       }
     });
+
     function escHtml(s) {
       return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
         return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
@@ -1597,7 +1621,7 @@
         if (att === 'Hadir' || att === 'Attending') att = 'Attending';
         else if (att === 'Tidak Hadir' || att === 'Not Attending') att = 'Not Attending';
         var meta = escHtml(att);
-        if (w.guests && String(w.guests).trim()) {
+        if (w.guests && String(w.guests).trim() && (att === 'Attending' || att === 'Hadir')) {
           var count = parseInt(w.guests, 10);
           var suffix = (count > 1) ? ' guests' : ' guest';
           meta += (meta ? ' \u2022 ' : '') + escHtml(w.guests) + suffix;
@@ -1625,12 +1649,54 @@
       visibleCount += 5;
       renderWishes();
     });
+    var wishNameInput = document.getElementById('wishName');
+    if (wishNameInput) {
+      wishNameInput.addEventListener('input', function () {
+        var errEl = document.getElementById('wishError');
+        if (errEl) { errEl.style.display = 'none'; errEl.textContent = ''; }
+      });
+    }
+
     document.getElementById('wishForm').addEventListener('submit', function (e) {
       e.preventDefault();
+      var nameVal = document.getElementById('wishName').value.trim();
+      var cleanName = nameVal.toLowerCase();
+      var errEl = document.getElementById('wishError');
+      if (errEl) {
+        errEl.style.display = 'none';
+        errEl.textContent = '';
+      }
+
+      // 1. Cek apakah nama ini sudah pernah mengirim ucapan di daftar ucapan
+      var alreadySent = allWishes.some(function (w) {
+        return w.name && w.name.trim().toLowerCase() === cleanName;
+      });
+
+      // 2. Cek apakah di browser ini sudah pernah mengirim dengan nama ini
+      var localSent = [];
+      try {
+        localSent = JSON.parse(localStorage.getItem('sent_wish_names') || '[]');
+      } catch (err) { }
+      if (localSent.some(function (n) { return String(n).trim().toLowerCase() === cleanName; })) {
+        alreadySent = true;
+      }
+
+      if (alreadySent) {
+        if (errEl) {
+          errEl.textContent = 'Nama ini sudah mengirimkan ucapan sebelumnya (hanya bisa kirim 1 kali).';
+          errEl.style.display = 'block';
+        } else {
+          alert('Nama ini sudah mengirimkan ucapan sebelumnya (hanya bisa kirim 1 kali).');
+        }
+        return;
+      }
+
+      var isAttending = (document.querySelector('input[name="attend"]:checked') || {}).value === 'Attending';
+      var guestCount = isAttending ? ((document.querySelector('input[name="guestCount"]:checked') || {}).value || '1') : '';
       var payload = {
-        name: document.getElementById('wishName').value.trim(),
-        attendance: (document.querySelector('input[name="attend"]:checked') || {}).value || 'Attending',
-        guests: '',
+        name: nameVal,
+        attendance: isAttending ? 'Attending' : 'Not Attending',
+        guests: guestCount,
         message: document.getElementById('wishMsg').value.trim()
       };
       var btn = this.querySelector('button[type=submit]');
@@ -1645,7 +1711,23 @@
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       }).then(function (r) { return r.json(); }).catch(function () { return {}; })
-        .then(function () {
+        .then(function (res) {
+          if (res && res.ok === false && res.error) {
+            if (errEl) {
+              errEl.textContent = res.error;
+              errEl.style.display = 'block';
+            } else {
+              alert(res.error);
+            }
+            done();
+            return;
+          }
+
+          try {
+            localSent.push(cleanName);
+            localStorage.setItem('sent_wish_names', JSON.stringify(localSent));
+          } catch (err) { }
+
           var t = new Date().toLocaleString('id-ID', {
             day: '2-digit', month: 'short', year: 'numeric',
             hour: '2-digit', minute: '2-digit'
@@ -1654,6 +1736,14 @@
           visibleCount++;
           renderWishes();
           document.getElementById('wishForm').reset();
+          syncRadioGroup('attend');
+          syncRadioGroup('guestCount');
+          var gcContainer = document.getElementById('guestCountContainer');
+          if (gcContainer) gcContainer.style.display = 'block';
+          if (errEl) {
+            errEl.style.display = 'none';
+            errEl.textContent = '';
+          }
           document.getElementById('wishPanel').style.display = 'none';
           done();
         });
@@ -1749,7 +1839,7 @@
           name = params.get('to') || params.get('n') || params.get('guest') || params.get('nama');
         }
 
-        if (!name) return 'Guest Name';
+        if (!name) return '';
         return name.trim();
       }
 
@@ -1762,7 +1852,8 @@
         var qrSlot = document.getElementById('qrGuestName');
         if (qrSlot) qrSlot.textContent = guestName;
 
-        var encodedName = encodeURIComponent(guestName);
+        var qrData = guestName || 'Anggi & Nia Wedding';
+        var encodedName = encodeURIComponent(qrData);
 
         var qrImg = document.getElementById('qrImage');
         if (qrImg) {
@@ -1782,8 +1873,8 @@
 
       window.downloadEInvitation = function () {
         var guestNameEl = document.getElementById('qrGuestName');
-        var guestName = guestNameEl ? guestNameEl.textContent.trim() : '';
-        if (!guestName) guestName = 'Guest';
+        var guestName = guestNameEl ? guestNameEl.textContent.trim() : getGuestName();
+        if (guestName === 'Guest' || guestName === 'Guest Name') guestName = '';
 
         var W = 1080;
         var H = 1670;
@@ -1888,19 +1979,22 @@
             ctx.fillText('PERSONAL QR CODE', cx, 1262);
             ctx.letterSpacing = '0px';
 
-            ctx.letterSpacing = '8px';
-            ctx.fillStyle = muted;
-            ctx.font = '500 32px "Arima Madurai", sans-serif';
-            ctx.fillText('NAMA TAMU / GUEST', cx, 1584);
-            ctx.letterSpacing = '0px';
-            ctx.fillStyle = baseColor;
-            ctx.font = '700 62px "Cormorant Upright", serif';
-            ctx.fillText(guestName, cx, 1646);
+            if (guestName) {
+              ctx.letterSpacing = '8px';
+              ctx.fillStyle = muted;
+              ctx.font = '500 32px "Arima Madurai", sans-serif';
+              ctx.fillText('NAMA TAMU / GUEST', cx, 1584);
+              ctx.letterSpacing = '0px';
+              ctx.fillStyle = baseColor;
+              ctx.font = '700 62px "Cormorant Upright", serif';
+              ctx.fillText(guestName, cx, 1646);
+            }
 
             var dataUrl = canvas.toDataURL('image/png');
             var a = document.createElement('a');
             a.href = dataUrl;
-            a.download = 'E-Invitation-Anggi-Nia-' + guestName.replace(/[^a-zA-Z0-9]+/g, '-').replace(/^-+|-+$/g, '') + '.png';
+            var suffix = guestName ? '-' + guestName.replace(/[^a-zA-Z0-9]+/g, '-').replace(/^-+|-+$/g, '') : '';
+            a.download = 'E-Invitation-Anggi-Nia' + suffix + '.png';
             document.body.appendChild(a);
             a.click();
             a.remove();
