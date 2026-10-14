@@ -515,7 +515,7 @@
                         <div class="text-center mb-4 animate__animated animate__fadeInUp animate__slower">
                           <div class="editable" style="font-size:14px;">Send your prayers and wishes.<br>Confirm your
                             attendance by clicking the button below.</div>
-                        </div> <button type="button"
+                        </div> <button type="button" id="btnConfirmWish"
                           class="btn-wish-rsvp btn btn-primary rounded-pill animate__animated animate__fadeInUp animate__slow"
                           style="" onclick="document.getElementById('wishPanel').style.display='flex';">Confirm &amp;
                           Send Wishes</button>
@@ -1637,14 +1637,51 @@
       var b = document.getElementById('btnMoreWishes');
       b.style.display = allWishes.length > visibleCount ? 'inline-block' : 'none';
     }
+    function hideConfirmWishBtn() {
+      var btns = document.querySelectorAll('.btn-wish-rsvp, #btnConfirmWish');
+      btns.forEach(function (btn) {
+        btn.style.setProperty('display', 'none', 'important');
+      });
+      var panel = document.getElementById('wishPanel');
+      if (panel) panel.style.display = 'none';
+    }
+
+    try {
+      localStorage.removeItem('wish_submitted');
+    } catch (e) { }
+
+    function checkWishSentStatus() {
+      try {
+        if (sessionStorage.getItem('wish_submitted_session') === 'true') {
+          hideConfirmWishBtn();
+        }
+      } catch (e) { }
+    }
+
     function loadWishes() {
-      if (!SHEET_API || SHEET_API.indexOf('http') !== 0) { renderWishes(); return; }
+      if (!SHEET_API || SHEET_API.indexOf('http') !== 0) {
+        renderWishes();
+        return;
+      }
       fetch(SHEET_API + '?action=wishes')
         .then(function (r) { return r.json(); })
-        .then(function (d) { allWishes = (d && d.wishes) || []; renderWishes(); })
+        .then(function (d) {
+          allWishes = (d && d.wishes) || [];
+          renderWishes();
+        })
         .catch(function () { });
     }
-    document.addEventListener('DOMContentLoaded', loadWishes);
+
+    checkWishSentStatus();
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function () {
+        checkWishSentStatus();
+        loadWishes();
+      });
+    } else {
+      loadWishes();
+    }
+
     document.getElementById('btnMoreWishes').addEventListener('click', function () {
       visibleCount += 5;
       renderWishes();
@@ -1726,6 +1763,7 @@
           try {
             localSent.push(cleanName);
             localStorage.setItem('sent_wish_names', JSON.stringify(localSent));
+            sessionStorage.setItem('wish_submitted_session', 'true');
           } catch (err) { }
 
           var t = new Date().toLocaleString('id-ID', {
@@ -1745,6 +1783,7 @@
             errEl.textContent = '';
           }
           document.getElementById('wishPanel').style.display = 'none';
+          hideConfirmWishBtn();
           done();
         });
     });
